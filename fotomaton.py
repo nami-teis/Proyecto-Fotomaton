@@ -3,11 +3,14 @@ import os
 from os import remove
 import time
 from Camara import Camara
+from Imagen import Imagen
 
 dimensiones = (2560, 1080)#ancho alto
 cam = Camara(dimensiones)
 
-ruta =  directorio_actual = os.path.dirname(os.path.abspath(__file__)) 
+ruta = os.path.dirname(os.path.abspath(__file__)) 
+
+img = Imagen("foto.jpg")
 
 foto = False
 while not foto:
@@ -17,19 +20,19 @@ while not foto:
     if ret == False:
         break
 
-    cv2.imshow("imagen", frame)
-    # Si se presiona la tecla de esc se guardará la foto
-    if cv2.waitKey(1) == 27:
-        nombre_archivo = os.path.join(ruta, 'foto.jpg')  # Construir la ruta completa con el nombre del archivo
-        cv2.imwrite(nombre_archivo, frame)  # Guardamos imagen
+    img.mostrar(frame)
 
-        time.sleep(10)
+    # Si se presiona la tecla de esc se guardará la foto, esto se deberá reemplazar con pygame
+    if cv2.waitKey(1) == 27:
+        img.guardar(frame)
+        time.sleep(5)
         respuesta = input("¿Te gusta la imagen? s|n: ")
         if respuesta.lower() == "s":
             # se tendría que poner el comando de la impresora
-            os.startfile(nombre_archivo, "print")
+            # os.startfile(nombre_archivo, "print") o hacer un script :/
             foto = True
         else:
-            remove(nombre_archivo)
+            img.borrar()
+            
 cam.finalizar()
-remove(nombre_archivo)
+img.borrar()
