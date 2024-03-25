@@ -1,15 +1,11 @@
 import cv2
 import os
-from os import remove
 import time
 from Camara import Camara
 from Imagen import Imagen
 
 dimensiones = (2560, 1080)#ancho alto
 cam = Camara(dimensiones)
-
-ruta = os.path.dirname(os.path.abspath(__file__)) 
-
 img = Imagen("foto.jpg")
 
 foto = False
@@ -18,7 +14,7 @@ while not foto:
     ret, frame = cam.leer()
 
     if ret == False:
-        break
+        raise Exception ("No se ha podido obtener ninguna imagen de la camara")
 
     img.mostrar(frame)
 
@@ -33,6 +29,6 @@ while not foto:
             foto = True
         else:
             img.borrar()
-            
+
 cam.finalizar()
 img.borrar()
