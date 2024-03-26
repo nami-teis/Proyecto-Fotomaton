@@ -5,7 +5,6 @@ from Camara import Camara
 from Imagen import Imagen
 
 class Fotomaton: 
-    dimensiones : tuple[int, int]
     cam : Camara
     img : Imagen
 
