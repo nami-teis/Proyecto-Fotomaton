@@ -49,7 +49,7 @@ class Fotomaton:
         directorio = os.getcwd()
         self.cortinaIzq = pygame.image.load(directorio + "\\Multimedia\\CortinaIzq.png")
         self.cortinaDcha = pygame.image.load(directorio + "\\Multimedia\\CortinaDcha.png")
-        self.imagen_fondo =  pygame.image.load(directorio + "\\Multimedia\\6715281.jpg")
+        self.imagen_fondo =  pygame.image.load(directorio + "\\Multimedia\\fondo.jpg")
 
         #Escalamos las imágenes
         self.imagen_fondo = pygame.transform.scale(self.imagen_fondo, (self.width, self.height))
@@ -61,7 +61,7 @@ class Fotomaton:
         self.ci_x = 100
         self.ci_y = 0 
         self.cd_x = self.width - self.ci_x - self.imagen_width
-        self.ci_y = 0
+        self.cd_y = 0
 
     def crear_botones(self): 
         width = 200 
@@ -69,7 +69,7 @@ class Fotomaton:
         color_normal = Fotomaton.GREEN
         color_hover = Fotomaton.RED
         color_texto = Fotomaton.WHITE
-        self.font_size = 30
+        self.font_size =  30
         
         centro_x = (self.width - width) // 2
         centro_y = (self.height - height) // 2
@@ -90,13 +90,13 @@ class Fotomaton:
         self.crear_botones()
         self.crear_textos()
 
-        cam = Camara(0)
+        cam = cv2.VideoCapture(0)
         img = Imagen("foto.jpg")
 
         capturado = False 
         mostrar_boton_capturar = False
         mostrar_botones_si_no = False
-        movimiento_cortinas = True
+        movimiento_cortinas = False
         pasos = 15
         temp_movimiento = 0
         capturar = False
@@ -121,20 +121,20 @@ class Fotomaton:
                     elif self.boton_no.fue_presionado(mouse, event): 
                         img.borrar()
                         mostrar_botones_si_no = False
-                        mostrarCapturar = True
+                        mostrar_boton_capturar = True
 
             if movimiento_cortinas: 
                 self.boton_inicio.eliminar()
-                if self.ci_x > 0 or self.cd_x < self.width - self.imagen_width: 
+                if self.ci_x > 0 and self.cd_x < self.width - self.imagen_width:
                     if temp_movimiento < pasos: 
-                        temp_movimiento = 10 
+                        temp_movimiento += 10 
                     else: 
                         self.ci_x = max(0, self.ci_x - 1)
                         self.cd_x = min(self.width - self.imagen_width, self.cd_x + 1)
                         temp_movimiento = 0 
                 else : 
                     capturar = True
-
+                    
             if not self.boton_inicio.eliminado: 
                 self.boton_inicio.update(mouse)
             else:  
@@ -160,7 +160,7 @@ class Fotomaton:
                 self.screen.blit(superficie_frame, (frame_x, frame_y))
 
             if capturar: 
-                ret, frame = cam.leer()
+                ret, frame = cam.read()
                 if ret:
                     pyframe = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     pyframe = np.rot90(pyframe)
@@ -176,7 +176,13 @@ class Fotomaton:
             pygame.display.flip()
 
         pygame.quit()
-        cam.finalizar()
+        cam.release()
         cv2.destroyAllWindows()
         
 
+if __name__ == "__main__": 
+    pygame.init()
+    f = Fotomaton()
+
+
+    f.ejecutar()

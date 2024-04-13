@@ -1,8 +1,7 @@
 from Fotomaton import Fotomaton
-
+import pygame
+pygame.init()
 f = Fotomaton()
 
-try: 
-    f.ejecutar()
-except: 
-    print("Algo ha fallado")
+
+f.ejecutar()
