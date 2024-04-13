@@ -1,6 +1,6 @@
 from Fotomaton import Fotomaton
 
-f = Fotomaton((2560, 1080))
+f = Fotomaton()
 
 try: 
     f.ejecutar()
