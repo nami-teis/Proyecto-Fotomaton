@@ -107,14 +107,13 @@ class Fotomaton:
         texto= "¿Te gusta la foto?"
         self.pregunta = Label(x,y,texto,self.font_size,Fotomaton.WHITE)
 
-    def ejecutar(self): 
+    def ejecutar(self, img : Imagen): 
         self.cargar_imagenes()
         self.posicionar_cortinas()
         self.crear_botones()
         self.crear_textos()
 
         cam = cv2.VideoCapture(0)
-        img = Imagen("foto.jpg")
 
         capturado = False 
         mostrar_boton_capturar = False
