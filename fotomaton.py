@@ -106,6 +106,36 @@ class Fotomaton:
         y = 125
         texto= "¿Te gusta la foto?"
         self.pregunta = Label(x,y,texto,self.font_size,Fotomaton.WHITE)
+    
+    def mover_cortinas_fuera_de_pantalla(self):
+        pasos = 15
+        temp_movimiento = 0
+
+        while self.ci_x > -self.imagen_width - 500 and self.cd_x < self.width + 500:
+            # Verificar si se presiona el botón de salir
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    return
+
+            # Actualizar posición de las cortinas
+            if temp_movimiento < pasos:
+                temp_movimiento += 10
+            else:
+                self.ci_x -= 3
+                self.cd_x += 3
+                temp_movimiento = 0
+
+            # Limpiar pantalla
+            self.screen.fill(self.WHITE)
+
+            # Dibujar las cortinas
+            self.screen.blit(self.imagen_fondo, (0, 0))
+            self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
+            self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+
+            pygame.display.flip()
+            pygame.time.delay(50) 
 
     def ejecutar(self, img : Imagen): 
         self.cargar_imagenes()
@@ -115,12 +145,12 @@ class Fotomaton:
 
         cam = cv2.VideoCapture(0)
 
+        temp_movimiento = 0 
+        pasos = 15
         capturado = False 
         mostrar_boton_capturar = False
         mostrar_botones_si_no = False
         movimiento_cortinas = False
-        pasos = 15
-        temp_movimiento = 0
         capturar = False
 
         while not capturado : 
@@ -146,14 +176,36 @@ class Fotomaton:
                         mostrar_boton_capturar = True
 
             if movimiento_cortinas: 
-                self.boton_inicio.eliminar()
-                if self.ci_x > -500 and self.cd_x < self.width - self.imagen_width - 500:
-                    if temp_movimiento < pasos: 
-                        temp_movimiento += 10 
-                    else: 
-                        self.ci_x = max(0, self.ci_x - 1)
-                        self.cd_x = min(self.width - self.imagen_width, self.cd_x + 1)
-                        temp_movimiento = 0 
+                if self.ci_x > -self.imagen_width - 500 and self.cd_x < self.width + 500:
+                    # Verificar si se presiona el botón de salir
+                    # for event in pygame.event.get():
+                    #     if event.type == pygame.QUIT:
+                    #         pygame.quit()
+                    #         return
+
+                    # Actualizar posición de las cortinas
+                    if temp_movimiento < pasos:
+                        temp_movimiento += 10
+                    else:
+                        self.ci_x -= 3
+                        self.cd_x += 3
+                        temp_movimiento = 0
+
+                    # Limpiar pantalla
+                    self.screen.fill(self.WHITE)
+
+                    # Dibujar las cortinas
+                    self.screen.blit(self.imagen_fondo, (0, 0))
+                    self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
+                    self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+                    # self.boton_inicio.eliminar()
+                    # if self.ci_x > -500 and self.cd_x < self.width - self.imagen_width - 500:
+                    #     if temp_movimiento < pasos: 
+                    #         temp_movimiento += 10 
+                    #     else: 
+                    #         self.ci_x = max(-500, self.ci_x - 1)
+                    #         self.cd_x = min(self.width - self.imagen_width - 500, self.cd_x + 1)
+                    #         temp_movimiento = 0 
                 else : 
                     capturar = True
                     
@@ -183,9 +235,10 @@ class Fotomaton:
 
             if capturar: 
                 ret, frame = cam.read()
+                frame = np.rot90(frame) #Creo que es mejor imprimirla verticalmente para que se vea más grande. 
                 if ret:
                     pyframe = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    pyframe = np.rot90(pyframe)
+                    # pyframe = np.rot90(pyframe) #En el caso de  no imprimirla verticalmente, se  eliminara la linea 238 y se descomentará esta
                     superficie_frame = pygame.surfarray.make_surface(pyframe)
                     superficie_frame = pygame.transform.scale(superficie_frame, (400, 300))
 
