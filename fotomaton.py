@@ -73,8 +73,8 @@ class Fotomaton:
 
         #Escalamos las imágenes
         self.imagen_fondo = pygame.transform.scale(self.imagen_fondo, (self.width, self.height))
-        self.cortinaIzq = pygame.transform.scale(self.cortinaIzq, (200, self.height))
-        self.cortinaDcha = pygame.transform.scale(self.cortinaDcha, (200, self.height))
+        self.cortinaIzq = pygame.transform.scale(self.cortinaIzq, (400, self.height))
+        self.cortinaDcha = pygame.transform.scale(self.cortinaDcha, (400, self.height))
         self.cortinaSinMovDcha = pygame.transform.scale(self.cortinaSinMovDcha, (300, self.height))
         self.cortinaSinMovIzq = pygame.transform.scale(self.cortinaSinMovIzq, (300, self.height))
         self.cortinaCentral = pygame.transform.scale(self.cortinaCentral, (self.width, 200))
@@ -147,16 +147,15 @@ class Fotomaton:
 
             if movimiento_cortinas: 
                 self.boton_inicio.eliminar()
-                # if self.ci_x > 0 and self.cd_x < self.width - self.imagen_width:
-                #     if temp_movimiento < pasos: 
-                #         temp_movimiento += 10 
-                #     else: 
-                #         self.ci_x = max(0, self.ci_x - 1)
-                #         self.cd_x = min(self.width - self.imagen_width, self.cd_x + 1)
-                #         temp_movimiento = 0 
-                # else : 
-                capturar = True
-                movimiento_cortinas = False
+                if self.ci_x > -500 and self.cd_x < self.width - self.imagen_width - 500:
+                    if temp_movimiento < pasos: 
+                        temp_movimiento += 10 
+                    else: 
+                        self.ci_x = max(0, self.ci_x - 1)
+                        self.cd_x = min(self.width - self.imagen_width, self.cd_x + 1)
+                        temp_movimiento = 0 
+                else : 
+                    capturar = True
                     
             if not self.boton_inicio.eliminado: 
                 self.boton_inicio.update(mouse)
@@ -166,18 +165,14 @@ class Fotomaton:
             if mostrar_botones_si_no: 
                 self.boton_no.update(mouse)
                 self.boton_si.update(mouse)
-
+            
+            self.screen.blit(self.imagen_fondo, (0,0))
+            self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
+            self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+            self.boton_inicio.draw(self.screen)
+        
             if mostrar_boton_capturar: 
                 self.boton_capturar.draw(self.screen)
-            else:
-                self.screen.blit(self.imagen_fondo, (0,0))
-                self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
-                self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
-                self.screen.blit(self.cortinaSinMovIzq, (-25, 0))
-                self.screen.blit(self.cortinaSinMovDcha, (550, 0))
-                self.screen.blit(self.cortinaCentral, (0, 0))
-
-            self.boton_inicio.draw(self.screen)
             
             if mostrar_botones_si_no: 
                 capturar = False
@@ -196,7 +191,7 @@ class Fotomaton:
 
                     # Calcular las coordenadas para centrar la imagen en la pantalla
                     frame_x = (self.width - superficie_frame.get_width()) // 2
-                    frame_y = (self.width - superficie_frame.get_height()) // 2 - 100
+                    frame_y = (self.width - superficie_frame.get_height()-200) // 2
 
                     self.screen.blit(superficie_frame, (frame_x, frame_y))
 
