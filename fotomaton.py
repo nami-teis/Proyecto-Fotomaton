@@ -2,6 +2,7 @@ from Boton import Boton
 from Label import Label
 from Imagen import Imagen
 from Camara import Camara
+import subprocess
 import pygame
 import cv2
 import numpy as np
@@ -43,7 +44,23 @@ class Fotomaton:
         self.height = 600
         self.screen =  pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Fotomatón teis")
+    
+
+
+    def imprimir(ruta_archivo, nombre_impresora=None):
+        comando = ['lp']
+        if nombre_impresora:
+            comando.extend(['-d', nombre_impresora])
+        comando.append(ruta_archivo)
         
+        proceso = subprocess.Popen(comando, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        salida, error = proceso.communicate()
+        
+        if proceso.returncode == 0: #Para el momento de depuración, después debe eliminarse. Se puede dejar comentado por si aparece algún error durante la fase de producción (Remember clases patricia sjsjsjs)
+            print("Archivo enviado a la impresora con éxito.")
+        else:
+            print(f"Error al imprimir el archivo: {error.decode()}")
+
 
     def cargar_imagenes(self): 
         directorio = os.getcwd()
@@ -81,12 +98,12 @@ class Fotomaton:
         centro_y = (self.height - height) // 2
         self.boton_inicio =  Boton(centro_x, centro_y,  width, height, color_normal, color_hover, "Iniciar", color_texto, self.font_size)
         self.boton_capturar = Boton(centro_x, centro_y + 250, width, height, color_normal, color_hover, "Hacer foto", color_texto, self.font_size)
-        self.boton_si = Boton( centro_x - 100, centro_y + 100, 100, 50, color_normal, color_hover, "Sí", color_texto, self.font_size)
-        self.boton_no = Boton( centro_x + 100, centro_y + 100, 100, 50, color_normal, color_hover, "No", color_texto, self.font_size)
+        self.boton_si = Boton( centro_x - 50, centro_y + 200, 100, 50, color_normal, color_hover, "Sí", color_texto, self.font_size)
+        self.boton_no = Boton( centro_x + 150, centro_y + 200, 100, 50, color_normal, color_hover, "No", color_texto, self.font_size)
 
     def crear_textos(self): 
-        x = 200
-        y = 0
+        x = (self.width - 175) // 2
+        y = 125
         texto= "¿Te gusta la foto?"
         self.pregunta = Label(x,y,texto,self.font_size,Fotomaton.WHITE)
 
@@ -121,7 +138,7 @@ class Fotomaton:
                         mostrar_boton_capturar = False
                         mostrar_botones_si_no = True
                     elif self.boton_si.fue_presionado(mouse, event): 
-                        #imprimir la fotoo
+                        self.imprimir(img.ruta)
                         img.borrar()
                         capturado = True
                     elif self.boton_no.fue_presionado(mouse, event): 
@@ -131,15 +148,16 @@ class Fotomaton:
 
             if movimiento_cortinas: 
                 self.boton_inicio.eliminar()
-                if self.ci_x > 0 and self.cd_x < self.width - self.imagen_width:
-                    if temp_movimiento < pasos: 
-                        temp_movimiento += 10 
-                    else: 
-                        self.ci_x = max(0, self.ci_x - 1)
-                        self.cd_x = min(self.width - self.imagen_width, self.cd_x + 1)
-                        temp_movimiento = 0 
-                else : 
-                    capturar = True
+                # if self.ci_x > 0 and self.cd_x < self.width - self.imagen_width:
+                #     if temp_movimiento < pasos: 
+                #         temp_movimiento += 10 
+                #     else: 
+                #         self.ci_x = max(0, self.ci_x - 1)
+                #         self.cd_x = min(self.width - self.imagen_width, self.cd_x + 1)
+                #         temp_movimiento = 0 
+                # else : 
+                capturar = True
+                movimiento_cortinas = False
                     
             if not self.boton_inicio.eliminado: 
                 self.boton_inicio.update(mouse)
@@ -149,17 +167,18 @@ class Fotomaton:
             if mostrar_botones_si_no: 
                 self.boton_no.update(mouse)
                 self.boton_si.update(mouse)
-            
-            self.screen.blit(self.imagen_fondo, (0,0))
-            self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
-            self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
-            self.screen.blit(self.cortinaSinMovIzq, (-25, 0))
-            self.screen.blit(self.cortinaSinMovDcha, (550, 0))
-            self.screen.blit(self.cortinaCentral, (0, 0))
-            self.boton_inicio.draw(self.screen)
-        
+
             if mostrar_boton_capturar: 
                 self.boton_capturar.draw(self.screen)
+            else:
+                self.screen.blit(self.imagen_fondo, (0,0))
+                self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
+                self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+                self.screen.blit(self.cortinaSinMovIzq, (-25, 0))
+                self.screen.blit(self.cortinaSinMovDcha, (550, 0))
+                self.screen.blit(self.cortinaCentral, (0, 0))
+
+            self.boton_inicio.draw(self.screen)
             
             if mostrar_botones_si_no: 
                 capturar = False
