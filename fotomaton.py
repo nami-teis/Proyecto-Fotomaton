@@ -1,7 +1,6 @@
 from Boton import Boton
 from Label import Label
 from Imagen import Imagen
-from Camara import Camara
 import subprocess
 import pygame
 import cv2
@@ -9,7 +8,6 @@ import numpy as np
 from pygame import Surface
 import os
 
-# Inicialización de Pygame
 
 class Fotomaton: 
     screen_width : int
@@ -34,9 +32,6 @@ class Fotomaton:
     boton_no : Boton
 
     pregunta : Label
-
-
-# Configuración de la pantalla
 
     def __init__(self): 
         
@@ -125,26 +120,48 @@ class Fotomaton:
                 if event.type == pygame.QUIT: 
                     capturado = True
 
-                elif event.type == pygame.MOUSEBUTTONDOWN: 
-                    if self.boton_inicio.fue_presionado(mouse, event): 
+                elif event.type == pygame.FINGERDOWN: 
+                    touch_pos = (event.x, event.y) # Se actualiza cada vez que se detecta que se ha tocado la pantalla. 
+                    if self.boton_inicio.fue_presionado(touch_pos, event): 
                         movimiento_cortinas = True
                         mostrar_boton_capturar = True
 
-                    elif self.boton_capturar.fue_presionado(mouse, event):
+                    elif self.boton_capturar.fue_presionado(touch_pos, event):
                         img.guardar(frame)
                         mostrar_boton_capturar = False
                         mostrar_botones_si_no = True
 
-                    elif self.boton_si.fue_presionado(mouse, event): 
+                    elif self.boton_si.fue_presionado(touch_pos, event): 
                         self.imprimir(img.ruta)
                         img.borrar()
                         capturado = True
 
-                    elif self.boton_no.fue_presionado(mouse, event): 
+                    elif self.boton_no.fue_presionado(touch_pos, event): 
                         img.borrar()
                         mostrar_botones_si_no = False
                         mostrar_boton_capturar = True
                         capturar = True
+                        
+                # elif event.type == pygame.MOUSEBUTTONDOWN: 
+                #     if self.boton_inicio.fue_presionado(mouse, event): 
+                #         movimiento_cortinas = True
+                #         mostrar_boton_capturar = True
+
+                #     elif self.boton_capturar.fue_presionado(mouse, event):
+                #         img.guardar(frame)
+                #         mostrar_boton_capturar = False
+                #         mostrar_botones_si_no = True
+
+                #     elif self.boton_si.fue_presionado(mouse, event): 
+                #         self.imprimir(img.ruta)
+                #         img.borrar()
+                #         capturado = True
+
+                #     elif self.boton_no.fue_presionado(mouse, event): 
+                #         img.borrar()
+                #         mostrar_botones_si_no = False
+                #         mostrar_boton_capturar = True
+                #         capturar = True
 
             self.screen.blit(self.imagen_fondo, (0, 0))
             self.screen.blit(self.cortinaCentral, (-50, -50))
@@ -172,13 +189,13 @@ class Fotomaton:
             else: 
                 
                 if not self.boton_inicio.eliminado: 
-                    self.boton_inicio.update(mouse)
+                    self.boton_inicio.update(touch_pos)
                 else:  
-                    self.boton_capturar.update(mouse)
+                    self.boton_capturar.update(touch_pos)
                 
                 if mostrar_botones_si_no: 
-                    self.boton_no.update(mouse)
-                    self.boton_si.update(mouse)
+                    self.boton_no.update(touch_pos)
+                    self.boton_si.update(touch_pos)
             
                 self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
                 self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
@@ -214,14 +231,9 @@ class Fotomaton:
 
         pygame.quit()
         cam.release()
+
         if os.path.exists(img.ruta): 
             img.borrar()
+
         cv2.destroyAllWindows()
         
-
-if __name__ == "__main__": 
-    pygame.init()
-    f = Fotomaton()
-
-
-    f.ejecutar()

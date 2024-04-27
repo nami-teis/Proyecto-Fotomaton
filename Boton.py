@@ -75,17 +75,16 @@ class Boton:
             text_rect = text_surface.get_rect(center=self.rect.center)
             screen.blit(text_surface, text_rect)
 
-    def update(self, mouse_pos):
+    def update(self, touch_pos):
         if not self.eliminado: 
-            self.hovered = self.rect.collidepoint(mouse_pos)
+            self.hovered = self.rect.collidepoint(touch_pos)
 
-    def fue_presionado(self, mouse_pos, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # Verificar si se hizo clic con el botón izquierdo del ratón
-            if self.rect.collidepoint(mouse_pos):  # Verificar si las coordenadas del clic están dentro del área del botón
+    def fue_presionado(self, touch_pos, event):
+        if event.type == pygame.FINGERDOWN: 
+            if self.rect.collidepoint(touch_pos):  # Verificar si las coordenadas del toque están dentro del área del botón
                 self.presionado = True
                 return True
         return False
 
     def eliminar(self): 
         self.eliminado = True
-
