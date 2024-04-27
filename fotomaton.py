@@ -106,36 +106,6 @@ class Fotomaton:
         y = 125
         texto= "¿Te gusta la foto?"
         self.pregunta = Label(x,y,texto,self.font_size,Fotomaton.WHITE)
-    
-    def mover_cortinas_fuera_de_pantalla(self):
-        pasos = 15
-        temp_movimiento = 0
-
-        while self.ci_x > -self.imagen_width - 500 and self.cd_x < self.width + 500:
-            # Verificar si se presiona el botón de salir
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    return
-
-            # Actualizar posición de las cortinas
-            if temp_movimiento < pasos:
-                temp_movimiento += 10
-            else:
-                self.ci_x -= 3
-                self.cd_x += 3
-                temp_movimiento = 0
-
-            # Limpiar pantalla
-            self.screen.fill(self.WHITE)
-
-            # Dibujar las cortinas
-            self.screen.blit(self.imagen_fondo, (0, 0))
-            self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
-            self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
-
-            pygame.display.flip()
-            pygame.time.delay(50) 
 
     def ejecutar(self, img : Imagen): 
         self.cargar_imagenes()
@@ -158,32 +128,31 @@ class Fotomaton:
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
                     capturado = True
+                    
                 elif event.type == pygame.MOUSEBUTTONDOWN: 
                     if self.boton_inicio.fue_presionado(mouse, event): 
                         movimiento_cortinas = True
                         mostrar_boton_capturar = True
+
                     elif self.boton_capturar.fue_presionado(mouse, event):
                         img.guardar(frame)
                         mostrar_boton_capturar = False
                         mostrar_botones_si_no = True
+
                     elif self.boton_si.fue_presionado(mouse, event): 
                         self.imprimir(img.ruta)
                         img.borrar()
                         capturado = True
+
                     elif self.boton_no.fue_presionado(mouse, event): 
                         img.borrar()
                         mostrar_botones_si_no = False
                         mostrar_boton_capturar = True
+                        capturar = True
 
             if movimiento_cortinas: 
+                self.boton_inicio.eliminar()
                 if self.ci_x > -self.imagen_width - 500 and self.cd_x < self.width + 500:
-                    # Verificar si se presiona el botón de salir
-                    # for event in pygame.event.get():
-                    #     if event.type == pygame.QUIT:
-                    #         pygame.quit()
-                    #         return
-
-                    # Actualizar posición de las cortinas
                     if temp_movimiento < pasos:
                         temp_movimiento += 10
                     else:
@@ -191,62 +160,54 @@ class Fotomaton:
                         self.cd_x += 3
                         temp_movimiento = 0
 
-                    # Limpiar pantalla
-                    self.screen.fill(self.WHITE)
-
-                    # Dibujar las cortinas
                     self.screen.blit(self.imagen_fondo, (0, 0))
                     self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
                     self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
-                    # self.boton_inicio.eliminar()
-                    # if self.ci_x > -500 and self.cd_x < self.width - self.imagen_width - 500:
-                    #     if temp_movimiento < pasos: 
-                    #         temp_movimiento += 10 
-                    #     else: 
-                    #         self.ci_x = max(-500, self.ci_x - 1)
-                    #         self.cd_x = min(self.width - self.imagen_width - 500, self.cd_x + 1)
-                    #         temp_movimiento = 0 
+                    
                 else : 
                     capturar = True
-                    
-            if not self.boton_inicio.eliminado: 
-                self.boton_inicio.update(mouse)
-            else:  
-                self.boton_capturar.update(mouse)
-            
-            if mostrar_botones_si_no: 
-                self.boton_no.update(mouse)
-                self.boton_si.update(mouse)
-            
-            self.screen.blit(self.imagen_fondo, (0,0))
-            self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
-            self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
-            self.boton_inicio.draw(self.screen)
-        
-            if mostrar_boton_capturar: 
-                self.boton_capturar.draw(self.screen)
-            
-            if mostrar_botones_si_no: 
-                capturar = False
-                self.pregunta.draw(self.screen)
-                self.boton_si.draw(self.screen)
-                self.boton_no.draw(self.screen)
-                self.screen.blit(superficie_frame, (frame_x, frame_y))
+                    movimiento_cortinas = False
 
-            if capturar: 
-                ret, frame = cam.read()
-                frame = np.rot90(frame) #Creo que es mejor imprimirla verticalmente para que se vea más grande. 
-                if ret:
-                    pyframe = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                    # pyframe = np.rot90(pyframe) #En el caso de  no imprimirla verticalmente, se  eliminara la linea 238 y se descomentará esta
-                    superficie_frame = pygame.surfarray.make_surface(pyframe)
-                    superficie_frame = pygame.transform.scale(superficie_frame, (400, 300))
-
-                    # Calcular las coordenadas para centrar la imagen en la pantalla
-                    frame_x = (self.width - superficie_frame.get_width()) // 2
-                    frame_y = (self.width - superficie_frame.get_height()-200) // 2
-
+            else: 
+                        
+                if not self.boton_inicio.eliminado: 
+                    self.boton_inicio.update(mouse)
+                else:  
+                    self.boton_capturar.update(mouse)
+                
+                if mostrar_botones_si_no: 
+                    self.boton_no.update(mouse)
+                    self.boton_si.update(mouse)
+                
+                self.screen.blit(self.imagen_fondo, (0,0))
+                self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
+                self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+                self.boton_inicio.draw(self.screen)
+            
+                if mostrar_boton_capturar: 
+                    self.boton_capturar.draw(self.screen)
+                
+                if mostrar_botones_si_no: 
+                    capturar = False
+                    self.pregunta.draw(self.screen)
+                    self.boton_si.draw(self.screen)
+                    self.boton_no.draw(self.screen)
                     self.screen.blit(superficie_frame, (frame_x, frame_y))
+
+                if capturar: 
+                    ret, frame = cam.read()
+                    frame = np.rot90(frame) #Creo que es mejor imprimirla verticalmente para que se vea más grande. 
+                    if ret:
+                        pyframe = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                        # pyframe = np.rot90(pyframe) #En el caso de  no imprimirla verticalmente, se  eliminara la linea 238 y se descomentará esta
+                        superficie_frame = pygame.surfarray.make_surface(pyframe)
+                        superficie_frame = pygame.transform.scale(superficie_frame, (400, 300))
+
+                        # Calcular las coordenadas para centrar la imagen en la pantalla
+                        frame_x = (self.width - superficie_frame.get_width()) // 2
+                        frame_y = (self.width - superficie_frame.get_height()-200) // 2
+
+                        self.screen.blit(superficie_frame, (frame_x, frame_y))
 
             pygame.display.flip()
 
