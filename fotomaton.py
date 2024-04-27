@@ -47,18 +47,24 @@ class Fotomaton:
 
     def cargar_imagenes(self): 
         directorio = os.getcwd()
-        self.cortinaIzq = pygame.image.load(directorio + "\\Multimedia\\CortinaIzq.png")
-        self.cortinaDcha = pygame.image.load(directorio + "\\Multimedia\\CortinaDcha.png")
+        self.cortinaIzq = pygame.image.load(directorio + "\\Multimedia\\cortinas.png")
+        self.cortinaDcha = pygame.image.load(directorio + "\\Multimedia\\cortinas.png")
+        self.cortinaSinMovIzq = pygame.image.load(directorio + "\\Multimedia\\CortinaIzq.png")
+        self.cortinaSinMovDcha = pygame.image.load(directorio + "\\Multimedia\\CortinaDcha.png")
+        self.cortinaCentral = pygame.image.load(directorio + "\\Multimedia\\CortinaCentral.png")
         self.imagen_fondo =  pygame.image.load(directorio + "\\Multimedia\\fondo.jpg")
 
         #Escalamos las imágenes
         self.imagen_fondo = pygame.transform.scale(self.imagen_fondo, (self.width, self.height))
         self.cortinaIzq = pygame.transform.scale(self.cortinaIzq, (200, self.height))
         self.cortinaDcha = pygame.transform.scale(self.cortinaDcha, (200, self.height))
+        self.cortinaSinMovDcha = pygame.transform.scale(self.cortinaSinMovDcha, (300, self.height))
+        self.cortinaSinMovIzq = pygame.transform.scale(self.cortinaSinMovIzq, (300, self.height))
+        self.cortinaCentral = pygame.transform.scale(self.cortinaCentral, (self.width, 200))
 
     def posicionar_cortinas(self): 
         self.imagen_width, imagen_height = self.cortinaIzq.get_rect().size #Solo se hace una vez ya que son simétricas
-        self.ci_x = 100
+        self.ci_x = 0
         self.ci_y = 0 
         self.cd_x = self.width - self.ci_x - self.imagen_width
         self.cd_y = 0
@@ -147,6 +153,9 @@ class Fotomaton:
             self.screen.blit(self.imagen_fondo, (0,0))
             self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
             self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+            self.screen.blit(self.cortinaSinMovIzq, (-25, 0))
+            self.screen.blit(self.cortinaSinMovDcha, (550, 0))
+            self.screen.blit(self.cortinaCentral, (0, 0))
             self.boton_inicio.draw(self.screen)
         
             if mostrar_boton_capturar: 
@@ -165,11 +174,11 @@ class Fotomaton:
                     pyframe = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                     pyframe = np.rot90(pyframe)
                     superficie_frame = pygame.surfarray.make_surface(pyframe)
-                    superficie_frame = pygame.transform.scale(superficie_frame, (300, 200))
+                    superficie_frame = pygame.transform.scale(superficie_frame, (400, 300))
 
                     # Calcular las coordenadas para centrar la imagen en la pantalla
                     frame_x = (self.width - superficie_frame.get_width()) // 2
-                    frame_y = (self.width - superficie_frame.get_height()) // 2
+                    frame_y = (self.width - superficie_frame.get_height()) // 2 - 100
 
                     self.screen.blit(superficie_frame, (frame_x, frame_y))
 
@@ -177,6 +186,8 @@ class Fotomaton:
 
         pygame.quit()
         cam.release()
+        if os.path.exists(img.ruta): 
+            img.borrar()
         cv2.destroyAllWindows()
         
 
