@@ -17,8 +17,8 @@ class Fotomaton:
     screen : Surface
     WHITE : tuple[int,int,int] = (255, 255, 255)
     BLACK: tuple[int,int,int]  = (0,0,0)
-    RED : tuple[int,int,int] = (255, 0, 0)
-    GREEN : tuple[int,int,int] = (0, 255, 0)
+    BLUE : tuple[int,int,int] = (218,22,52)
+    LIGHT_BLUE : tuple[int,int,int] = (208,26, 86)
     
     cortinaIzq : Surface
     cortinaDcha :Surface
@@ -66,8 +66,6 @@ class Fotomaton:
         directorio = os.getcwd()
         self.cortinaIzq = pygame.image.load(directorio + "\\Multimedia\\cortinas.png")
         self.cortinaDcha = pygame.image.load(directorio + "\\Multimedia\\cortinas.png")
-        self.cortinaSinMovIzq = pygame.image.load(directorio + "\\Multimedia\\CortinaIzq.png")
-        self.cortinaSinMovDcha = pygame.image.load(directorio + "\\Multimedia\\CortinaDcha.png")
         self.cortinaCentral = pygame.image.load(directorio + "\\Multimedia\\CortinaCentral.png")
         self.imagen_fondo =  pygame.image.load(directorio + "\\Multimedia\\fondo.jpg")
 
@@ -75,9 +73,7 @@ class Fotomaton:
         self.imagen_fondo = pygame.transform.scale(self.imagen_fondo, (self.width, self.height))
         self.cortinaIzq = pygame.transform.scale(self.cortinaIzq, (400, self.height))
         self.cortinaDcha = pygame.transform.scale(self.cortinaDcha, (400, self.height))
-        self.cortinaSinMovDcha = pygame.transform.scale(self.cortinaSinMovDcha, (300, self.height))
-        self.cortinaSinMovIzq = pygame.transform.scale(self.cortinaSinMovIzq, (300, self.height))
-        self.cortinaCentral = pygame.transform.scale(self.cortinaCentral, (self.width, 200))
+        self.cortinaCentral = pygame.transform.scale(self.cortinaCentral, (self.width + 100, 200))
 
     def posicionar_cortinas(self): 
         self.imagen_width, imagen_height = self.cortinaIzq.get_rect().size #Solo se hace una vez ya que son simétricas
@@ -89,8 +85,8 @@ class Fotomaton:
     def crear_botones(self): 
         width = 200 
         height = 50 
-        color_normal = Fotomaton.GREEN
-        color_hover = Fotomaton.RED
+        color_normal = Fotomaton.BLUE
+        color_hover = Fotomaton.LIGHT_BLUE
         color_texto = Fotomaton.WHITE
         self.font_size =  30
         
@@ -128,7 +124,7 @@ class Fotomaton:
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
                     capturado = True
-                    
+
                 elif event.type == pygame.MOUSEBUTTONDOWN: 
                     if self.boton_inicio.fue_presionado(mouse, event): 
                         movimiento_cortinas = True
@@ -150,8 +146,12 @@ class Fotomaton:
                         mostrar_boton_capturar = True
                         capturar = True
 
+            self.screen.blit(self.imagen_fondo, (0, 0))
+            self.screen.blit(self.cortinaCentral, (-50, -50))
+
             if movimiento_cortinas: 
                 self.boton_inicio.eliminar()
+                
                 if self.ci_x > -self.imagen_width - 500 and self.cd_x < self.width + 500:
                     if temp_movimiento < pasos:
                         temp_movimiento += 10
@@ -160,16 +160,17 @@ class Fotomaton:
                         self.cd_x += 3
                         temp_movimiento = 0
 
-                    self.screen.blit(self.imagen_fondo, (0, 0))
+                    
                     self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
                     self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+                    self.screen.blit(self.cortinaCentral, (-50, -50))
                     
                 else : 
                     capturar = True
                     movimiento_cortinas = False
 
             else: 
-                        
+                
                 if not self.boton_inicio.eliminado: 
                     self.boton_inicio.update(mouse)
                 else:  
@@ -178,10 +179,10 @@ class Fotomaton:
                 if mostrar_botones_si_no: 
                     self.boton_no.update(mouse)
                     self.boton_si.update(mouse)
-                
-                self.screen.blit(self.imagen_fondo, (0,0))
+            
                 self.screen.blit(self.cortinaIzq, (self.ci_x, self.ci_y))
                 self.screen.blit(self.cortinaDcha, (self.cd_x, self.cd_y))
+                self.screen.blit(self.cortinaCentral, (-50, -50))
                 self.boton_inicio.draw(self.screen)
             
                 if mostrar_boton_capturar: 
