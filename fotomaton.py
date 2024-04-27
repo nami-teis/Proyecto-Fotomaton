@@ -115,7 +115,7 @@ class Fotomaton:
                         mostrar_boton_capturar = False
                         mostrar_botones_si_no = True
                     elif self.boton_si.fue_presionado(mouse, event): 
-                        #imprimir la fotoo
+                        #imprimir la fotoo coodigo anterior
                         img.borrar()
                         capturado = True
                     elif self.boton_no.fue_presionado(mouse, event): 
