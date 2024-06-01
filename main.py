@@ -1,4 +1,4 @@
-from Fotomaton import Fotomaton
+from FotomatonTactil import Fotomaton
 from Imagen import Imagen
 import pygame
 import os

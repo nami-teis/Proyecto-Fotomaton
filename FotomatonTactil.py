@@ -115,7 +115,6 @@ class Fotomaton:
         capturar = False
 
         while not capturado : 
-            mouse = pygame.mouse.get_pos()
             for event in pygame.event.get(): 
                 if event.type == pygame.QUIT: 
                     capturado = True
@@ -141,27 +140,6 @@ class Fotomaton:
                         mostrar_botones_si_no = False
                         mostrar_boton_capturar = True
                         capturar = True
-                        
-                # elif event.type == pygame.MOUSEBUTTONDOWN: 
-                #     if self.boton_inicio.fue_presionado(mouse, event): 
-                #         movimiento_cortinas = True
-                #         mostrar_boton_capturar = True
-
-                #     elif self.boton_capturar.fue_presionado(mouse, event):
-                #         img.guardar(frame)
-                #         mostrar_boton_capturar = False
-                #         mostrar_botones_si_no = True
-
-                #     elif self.boton_si.fue_presionado(mouse, event): 
-                #         self.imprimir(img.ruta)
-                #         img.borrar()
-                #         capturado = True
-
-                #     elif self.boton_no.fue_presionado(mouse, event): 
-                #         img.borrar()
-                #         mostrar_botones_si_no = False
-                #         mostrar_boton_capturar = True
-                #         capturar = True
 
             self.screen.blit(self.imagen_fondo, (0, 0))
             self.screen.blit(self.cortinaCentral, (-50, -50))
