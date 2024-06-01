@@ -80,7 +80,7 @@ class Boton:
             self.hovered = self.rect.collidepoint(touch_pos)
 
     def fue_presionado(self, touch_pos, event):
-        if event.type == pygame.FINGERDOWN: 
+        if event.type == pygame.FINGERDOWN or event.type == pygame.MOUSEBUTTONDOWN: 
             if self.rect.collidepoint(touch_pos):  # Verificar si las coordenadas del toque están dentro del área del botón
                 self.presionado = True
                 return True

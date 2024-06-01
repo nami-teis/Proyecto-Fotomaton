@@ -121,9 +121,10 @@ class Fotomaton:
         while not capturado : 
             mouse = pygame.mouse.get_pos()
             for event in pygame.event.get(): 
+                # print(f"Evento detectado: {event}")  # Debug para verificar los eventos, lo dejo porque me parece interesante que lo veas @German
                 if event.type == pygame.QUIT: 
                     capturado = True
-
+                
                 elif event.type == pygame.MOUSEBUTTONDOWN: 
                     if self.boton_inicio.fue_presionado(mouse, event): 
                         print("Boton iniciar capturado")
@@ -151,7 +152,6 @@ class Fotomaton:
 
             if movimiento_cortinas: 
                 self.boton_inicio.eliminar()
-                
                 if self.ci_x > -self.imagen_width - 500 and self.cd_x < self.width + 500:
                     if temp_movimiento < pasos:
                         temp_movimiento += 10
